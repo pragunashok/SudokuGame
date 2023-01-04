@@ -24,6 +24,7 @@ public class SudokuGame extends JFrame implements KeyListener
                                 {0,0,5,2,7,3,6,8,0},
                                 {8,2,6,4,1,9,7,5,3},
                                 {7,3,0,8,5,6,0,0,0}};
+    public static boolean[][] changeable = new boolean[GridSize][GridSize];
     public static void clrscr()// Function to clear screen
     {
         System.out.print('\u000C');
@@ -36,6 +37,14 @@ public class SudokuGame extends JFrame implements KeyListener
                 if(grid[i][j]==0)
                     count++;
         return count;    
+    }
+    public static void setChanges(){
+        for(int i=0;i<GridSize;i++){
+            for(int j=0;j<GridSize;j++){
+                if(grid[i][j]==0)changeable[i][j]=true;
+                else changeable[i][j]=false;
+            }
+        }
     }
     public static boolean checkRow(int[][] grid, int x , int y){
         for(int i=0;i<GridSize;i++){
@@ -163,7 +172,7 @@ public class SudokuGame extends JFrame implements KeyListener
         System.out.println("PointerX:"+pointerx+", PointerY:"+pointery);
     }
     public static void main(String[] args){
-        
+        setChanges();
         JFrame frame = new JFrame();
         JPanel panel = new JPanel(new FlowLayout());
         JTextField field = new JTextField(20);
@@ -234,25 +243,25 @@ public class SudokuGame extends JFrame implements KeyListener
                     break;
             case 'd': pointerx++;
                     break;
-            case '1': grid[pointery][pointerx] = 1;
+            case '1': if(changeable[pointery][pointerx])grid[pointery][pointerx] = 1;
                     break;
-            case '2': grid[pointery][pointerx] = 2;
+            case '2': if(changeable[pointery][pointerx])grid[pointery][pointerx] = 2;
                     break;
-            case '3': grid[pointery][pointerx] = 3;
+            case '3': if(changeable[pointery][pointerx])grid[pointery][pointerx] = 3;
                     break;
-            case '4': grid[pointery][pointerx] = 4;
+            case '4': if(changeable[pointery][pointerx])grid[pointery][pointerx] = 4;
                     break;
-            case '5': grid[pointery][pointerx] = 5;
+            case '5': if(changeable[pointery][pointerx])grid[pointery][pointerx] = 5;
                     break;
-            case '6': grid[pointery][pointerx] = 6;
+            case '6': if(changeable[pointery][pointerx])grid[pointery][pointerx] = 6;
                     break;
-            case '7': grid[pointery][pointerx] = 7;
+            case '7': if(changeable[pointery][pointerx])grid[pointery][pointerx] = 7;
                     break;
-            case '8': grid[pointery][pointerx] = 8;
+            case '8': if(changeable[pointery][pointerx])grid[pointery][pointerx] = 8;
                     break;
-            case '9': grid[pointery][pointerx] = 9;
+            case '9': if(changeable[pointery][pointerx])grid[pointery][pointerx] = 9;
                     break;
-            case '0': grid[pointery][pointerx] = 0;
+            case '0': if(changeable[pointery][pointerx])grid[pointery][pointerx] = 0;
                     break;
         }
         clrscr();
