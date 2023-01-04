@@ -15,15 +15,15 @@ public class SudokuGame extends JFrame implements KeyListener
     public static final int boxsize = (int)(Math.sqrt(GridSize));
     public static int pointerx = 0, pointery = 0;
     public static int[][] grid = {
-                                {0,8,0,3,0,2,0,0,0},
-                                {0,5,0,7,9,8,4,3,0},
-                                {3,0,7,1,0,5,8,0,0},
-                                {0,0,8,6,2,7,3,0,0},
-                                {0,7,0,9,3,1,0,6,8},
-                                {0,0,3,5,8,4,1,0,0},
-                                {0,0,5,2,7,3,6,8,0},
-                                {8,2,6,4,1,9,7,5,3},
-                                {7,3,0,8,5,6,0,0,0}};
+                                {0,2,0,4,5,6,7,8,9},
+                                {4,5,7,0,8,0,2,3,6},
+                                {6,8,9,2,3,7,0,4,0},
+                                {8,1,5,3,6,2,9,7,4},
+                                {2,7,4,8,9,1,6,5,3},
+                                {3,9,6,5,7,4,8,1,2},
+                                {5,4,2,6,1,8,3,9,7},
+                                {7,6,1,9,4,3,5,2,8},
+                                {9,3,8,7,2,5,4,6,1}};
     public static boolean[][] changeable = new boolean[GridSize][GridSize];
     public static void clrscr()// Function to clear screen
     {
@@ -144,13 +144,17 @@ public class SudokuGame extends JFrame implements KeyListener
             System.out.print("|");
             for(int j=0;j<grid.length;j++){
                 if(grid[i][j]==0)
-                    if(j%boxsize==boxsize-1)System.out.print("   +");
+                    if(j%boxsize==boxsize-1){
+                        System.out.print("   ");
+                        if(j%boxsize==boxsize-1 && j!=GridSize-1){System.out.print("#");
+                    }else{System.out.print("+");}
+                    }
                     else System.out.print("   |");    
                 else{
                     if(grid[i][j]<10)
                         System.out.print(" ");
                     System.out.print(grid[i][j]);
-                    if(j%boxsize==boxsize-1)System.out.print(" +");
+                    if(j%boxsize==boxsize-1 && j!=GridSize-1)System.out.print(" #");
                     else System.out.print(" |");
                     
                 }
@@ -160,16 +164,21 @@ public class SudokuGame extends JFrame implements KeyListener
             System.out.println();
             System.out.print("+");
             for(int j=0;j<grid.length;j++){
-                if(i%boxsize==boxsize-1 ){
+                if(i%boxsize==boxsize-1 && i!=GridSize-1){
                     System.out.print("++++");
-                }else System.out.print("---+");
+                }else{
+                    if(j%boxsize==boxsize-1 && j!=GridSize-1){System.out.print("---#");
+                    }else{System.out.print("---+");}
+                }
             }
             System.out.println();
         }
         for(int i=0;i<pointerx;i++)System.out.print("    ");
         System.out.println("  ^");
-        System.out.println(checkGrid(grid));
+        
         System.out.println("PointerX:"+pointerx+", PointerY:"+pointery);
+        System.out.println("State of Grid :"+checkGrid(grid));
+        System.out.println("Number of Unknowns : "+NumberofUnknowns(grid));
     }
     public static void main(String[] args){
         setChanges();
@@ -180,9 +189,10 @@ public class SudokuGame extends JFrame implements KeyListener
         panel.add(field);
         frame.getContentPane().add(panel);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(500,500);
+        frame.setSize(245,100);
         frame.setVisible(true);
-        
+        clrscr();
+        printGrid(grid);
         
         
         
@@ -208,40 +218,18 @@ public class SudokuGame extends JFrame implements KeyListener
             */ 
         
         
-        while(true){
-            clrscr();
-            printGrid(grid);
-            for(int i=0;i<3;i++)for(int j=6;j<9;j++)System.out.print(checkBox(grid,i,j));
-            System.out.println("\n MENU : \n 8,6,2,4 : Cursor wasd\n 5 : Change a number\n");
-            ch = in.nextInt();
-            switch(ch){
-                case 8: pointery--;
-                        break;
-                case 2: pointery++;
-                        break;
-                case 4: pointerx--;
-                        break;
-                case 6: pointerx++;
-                        break;
-                case 5: System.out.println("\n Enter new number to put ");
-                        ch=in.nextInt();
-                        grid[pointery][pointerx] = ch;
-            }
-            if(NumberofUnknowns(grid) == 0 && checkGrid(grid)){
-                System.out.println("  GAME OVER YOU WIN YAYYYY ");    
-            }
-        }
+        
     }
     public void keyTyped(KeyEvent e){
         char x = e.getKeyChar();
         switch(x){
-            case 'w': pointery--;
+            case 'w': if(pointery>0)pointery--;
                     break;
-            case 's': pointery++;
+            case 's': if(pointery<GridSize-1)pointery++;
                     break;
-            case 'a': pointerx--;
+            case 'a': if(pointerx>0)pointerx--;
                     break;
-            case 'd': pointerx++;
+            case 'd': if(pointerx<GridSize-1)pointerx++;
                     break;
             case '1': if(changeable[pointery][pointerx])grid[pointery][pointerx] = 1;
                     break;
@@ -266,7 +254,10 @@ public class SudokuGame extends JFrame implements KeyListener
         }
         clrscr();
         printGrid(grid);
-
+        if(NumberofUnknowns(grid) == 0 && checkGrid(grid)){
+                System.out.println("  GAME OVER YOU WIN YAYYYY ");  
+                return;
+        }
     }
     public void keyPressed(KeyEvent e){}
     public void keyReleased(KeyEvent e){}
