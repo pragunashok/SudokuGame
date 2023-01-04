@@ -135,11 +135,15 @@ public class SudokuGame extends JFrame implements KeyListener
             System.out.print("|");
             for(int j=0;j<grid.length;j++){
                 if(grid[i][j]==0)
-                    System.out.print("   |");    
+                    if(j%boxsize==boxsize-1)System.out.print("   +");
+                    else System.out.print("   |");    
                 else{
                     if(grid[i][j]<10)
                         System.out.print(" ");
-                    System.out.print(grid[i][j]+" |");
+                    System.out.print(grid[i][j]);
+                    if(j%boxsize==boxsize-1)System.out.print(" +");
+                    else System.out.print(" |");
+                    
                 }
             }
             if(i==pointery)System.out.print("<--");
@@ -147,7 +151,9 @@ public class SudokuGame extends JFrame implements KeyListener
             System.out.println();
             System.out.print("+");
             for(int j=0;j<grid.length;j++){
-                System.out.print("---+");
+                if(i%boxsize==boxsize-1 ){
+                    System.out.print("++++");
+                }else System.out.print("---+");
             }
             System.out.println();
         }
