@@ -10,13 +10,13 @@ import javax.swing.JTextField;
 import java.util.Random;
 public class SudokuGame extends JFrame implements KeyListener
 {
-    Label l;
-    TextArea area;    
+        
 
     public static final int GridSize=9;
     public static final int boxsize = (int)(Math.sqrt(GridSize));
     public static int pointerx = 0, pointery = 0;
     
+    /*
     public static int[][] grid = {
                                 {0,2,0,4,5,6,7,8,9},
                                 {4,5,7,0,8,0,2,3,6},
@@ -27,35 +27,35 @@ public class SudokuGame extends JFrame implements KeyListener
                                 {5,4,2,6,1,8,3,9,7},
                                 {7,6,1,9,4,3,5,2,8},
                                 {9,3,8,7,2,5,4,6,1}};
+     */
+    public static int[][] grid = {
+                                {0,0,0,7,0,1,0,0,0},
+                                {7,3,0,0,9,0,0,0,2},
+                                {5,6,1,0,0,0,4,9,0},
+                                {4,7,2,3,1,8,0,0,0},
+                                {0,0,0,5,0,9,0,0,0},
+                                {0,0,0,4,6,7,2,8,3},
+                                {0,4,6,0,0,0,1,5,9},
+                                {2,0,0,0,3,0,0,7,4},
+                                {0,0,0,1,0,5,0,0,0}};
+                                
+                            
+                                
+                                
                                 
     //public static int[][] grid = emptyGrid(GridSize);
     public static boolean[][] changeable = new boolean[GridSize][GridSize];
     
     
-    SudokuGame(){    
-          // creating the label  
-        l = new Label();    
-        // setting the location of the label in frame  
-        l.setBounds (20, 50, 100, 20);    
-        // creating the text area  
-        area = new TextArea();    
-        // setting the location of text area   
-        area.setBounds (20, 80, 300, 300);    
-        // adding the KeyListener to the text area  
-        area.addKeyListener(this);  
-        // adding the label and text area to the frame  
-        add(l);  
-        add(area);    
-        // setting the size, layout and visibility of frame  
-        setSize (400, 400);    
-        setLayout (null);    
-        setVisible (true);    
-    }    
+     
     public static void clrscr()// Function to clear screen
     {
         System.out.print('\u000C');
     }
-    public static int[][] emptyGrid(int n){
+    
+   
+  
+    public static int[][] emptyGrid(int n){ // Returns a 2d array of n*n size containing all zeroes
         int[][] grid = new int[n][n];
         for(int i=0;i<n;i++)
             for(int j=0;j<n;j++)
@@ -64,7 +64,8 @@ public class SudokuGame extends JFrame implements KeyListener
         
         return grid;
     }
-    public static int NumberofUnknowns(int[][] grid){
+    
+    public static int NumberofUnknowns(int[][] grid){// Returns the number of unfilled cells in the grid
         int count = 0;
         
         for(int i=0;i<GridSize;i++)
@@ -73,7 +74,7 @@ public class SudokuGame extends JFrame implements KeyListener
                     count++;
         return count;    
     }
-    public static void setChanges(){
+    public static void setChanges(){ // sets the values of the changeable array, which prevents the player from changing the original numbers
         for(int i=0;i<GridSize;i++){
             for(int j=0;j<GridSize;j++){
                 if(grid[i][j]==0)changeable[i][j]=true;
@@ -81,21 +82,41 @@ public class SudokuGame extends JFrame implements KeyListener
             }
         }
     }
-    public static boolean checkRow(int[][] grid, int x , int y){
+    public static boolean checkRow(int[][] grid, int x , int y){//checks the row of the given coordinates for duplicates
         for(int i=0;i<GridSize;i++){
             if(grid[x][i]==grid[x][y] && i!=y && grid[x][i] != 0)
                 return false;
         }
         return true;
     }
-    public static boolean checkCol(int[][] grid, int x, int y){
+    public static int[][][] possibilities(int[][] grid){
+        int [][][]fits = new int[GridSize][GridSize][GridSize];
+        for(int i=0;i<GridSize;i++){
+            for(int j=0;j<GridSize;j++){
+                if(grid[i][j]==0){
+                    for(int k=0;k<GridSize;k++)
+                        fits[i][j][k]=k+1;
+                    int[] arrbox = get1dBox(getBox(grid,i,j));    
+                    for(int k=0;k<GridSize;k++){
+                        for(int l=0;l<GridSize;l++){
+                            if(grid[k][j]==fits[i][j][l] || grid[i][k]==fits[i][j][l] || arrbox[k]==fits[i][j][l]){
+                                fits[i][j][l]=0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return fits;
+    }
+    public static boolean checkCol(int[][] grid, int x, int y){//checks the column of the given coordinates for duplicates
         for(int i=0;i<GridSize;i++){
             if(grid[i][y]==grid[x][y] && i!=x && grid[i][y] != 0)
                 return false;
         }
         return true;
     }
-    public static int topofBox(int x){
+    public static int topofBox(int x){// function to return the topmost location of the box containing the input parameter        
         if(x==0)
             return 0;
         return x-(x%(boxsize));        
@@ -105,13 +126,13 @@ public class SudokuGame extends JFrame implements KeyListener
             System.out.print(" "+leftofBox(i));
         }
     }*/
-    public static int leftofBox(int y){
+    public static int leftofBox(int y){// function to return the leftmost location of the box containing the input parameter
         if(y==0)
             return 0;
         return y-(y%(boxsize));
     }
     
-    public static int[][] getBox(int [][] grid, int x, int y){
+    public static int[][] getBox(int [][] grid, int x, int y){//returns the subgrid containing the input coordinates
         int[][] Box = new int[boxsize][boxsize];
         for(int i=0;i<boxsize;i++){
             for(int j=0;j<boxsize;j++){
@@ -122,7 +143,7 @@ public class SudokuGame extends JFrame implements KeyListener
         
         return Box;
     }
-    public static int[] get1dBox(int [][] box){
+    public static int[] get1dBox(int [][] box){//converts the 2d array of the box into a 1d array
         int arrBox[] = new int[boxsize*boxsize];
         int k=0;
         for(int i=0;i<boxsize;i++){
@@ -130,7 +151,7 @@ public class SudokuGame extends JFrame implements KeyListener
         }
         return arrBox;
     }
-    public static boolean checkBox(int[][] grid, int x, int y){
+    public static boolean checkBox(int[][] grid, int x, int y){//checks the subgrid of the given coordinates for duplicates
         int arrBox[] = get1dBox(getBox(grid,x,y));
         for(int i=0;i<GridSize;i++){
             for(int j=i+1;j<GridSize;j++){
@@ -212,12 +233,17 @@ public class SudokuGame extends JFrame implements KeyListener
         System.out.println("  ^");
         
         System.out.println("PointerX:"+pointerx+", PointerY:"+pointery);
-        System.out.println("State of Grid :"+checkGrid(grid));
+        System.out.print("Possibilities of current cell : ");
+        for(int i=0;i<GridSize;i++){
+            if(possibilities(grid)[pointery][pointerx][i]!=0)System.out.print(possibilities(grid)[pointery][pointerx][i]+" ");
+        }System.out.println();
+        
+        System.out.println("State of Grid : "+checkGrid(grid));
         System.out.println("Number of Unknowns : "+NumberofUnknowns(grid));
     }
     public static void main(String[] args){
         setChanges();
-        new SudokuGame();
+        
         JFrame frame = new JFrame();
         JPanel panel = new JPanel(new FlowLayout());
         JTextField field = new JTextField(20);
@@ -299,25 +325,31 @@ public class SudokuGame extends JFrame implements KeyListener
                 System.out.println("  GAME OVER YOU WIN YAYYYY ");  
                 return;
         }
-        l.setText ("Key Typed");    
+        
     }
     public void keyPressed(KeyEvent e){
         int a = e.getKeyCode();
-        System.out.println("ARROW KEY");
+        System.out.println(a);
         switch(a){
-            case KeyEvent.VK_UP : if(pointerx>0)pointerx--;
+            case 38 : System.out.println("up");
+                      pointery--;
                             break;
-            case KeyEvent.VK_DOWN : if(pointerx<GridSize-1)pointerx++;
+            case 40 : System.out.println("down");
+                      pointery++;
                             break;
-            case KeyEvent.VK_RIGHT : if(pointery<GridSize-1)pointery++;
+            case 39 : System.out.println("right");
+                      pointerx++;
                             break;
-            case KeyEvent.VK_LEFT : if(pointery>0)pointery--;
+            case 37 : System.out.println("left");
+                      pointerx--;
                             break;    
         }
-        l.setText ("Key Pressed");    
+        clrscr();
+        printGrid(grid);
+        
     }
     public void keyReleased(KeyEvent e){
-        l.setText ("Key Released");    
+        
 
     }
     
